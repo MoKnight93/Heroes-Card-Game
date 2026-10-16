@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose Your Squad | Card Battle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Condensed:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #07090d;
+    }
+
+    .game,
+    .game * {
+      box-sizing: border-box;
+    }
+
+    .game button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .game [hidden] {
+      display: none !important;
+    }
+
+    .game {
+      min-height: 100vh;
+      padding: 36px 24px 64px;
+      color: #e8ecf4;
+      font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+      font-size: 18px;
+      background: radial-gradient(900px 500px at 15% -10%, #12304f 0%, transparent 60%), radial-gradient(900px 500px at 90% 0%, #3a1218 0%, transparent 60%), #07090d;
+    }
+
+    .game .top {
+      text-align: center;
+    }
+
+    .game .top h1 {
+      margin: 0;
+      font-family: "Bangers", Impact, sans-serif;
+      font-weight: 400;
+      font-size: 64px;
+      letter-spacing: 3px;
+      line-height: 1;
+      text-shadow: 3px 3px 0 #000;
+    }
+
+    .game .top h1 span {
+      color: #38a8ff;
+    }
+
+    .game .top h1 em {
+      color: #ff4d57;
+      font-style: normal;
+    }
+
+    .game .top .rule {
+      margin: 12px auto 0;
+      max-width: 640px;
+      color: #9aa6b8;
+      font-size: 20px;
+    }
+
+    .game .modes {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 26px 0 30px;
+    }
+
+    .game .modes .mode {
+      padding: 10px 28px;
+      border: 2px solid #2a3344;
+      border-radius: 999px;
+      background: #0e131c;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      transition: background .2s, border-color .2s;
+    }
+
+    .game .modes .mode:hover {
+      border-color: #5a6a86;
+    }
+
+    .game .modes .mode.on {
+      background: #e8ecf4;
+      border-color: #e8ecf4;
+      color: #07090d;
+    }
+
+    .game .pick .dock {
+      margin: 0;
+    }
+
+    .game .pick .teams {
+      display: grid;
+      grid-template-columns: 1fr 190px 1fr;
+      gap: 20px;
+      align-items: start;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .game .pick .teams .team {
+      padding: 14px;
+      border: 2px solid #232b3a;
+      border-radius: 14px;
+      background: #0b1018;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .game .pick .teams .team.a.target {
+      border-color: #38a8ff;
+      box-shadow: 0 0 24px rgba(56, 168, 255, .25);
+    }
+
+    .game .pick .teams .team.b.target {
+      border-color: #ff4d57;
+      box-shadow: 0 0 24px rgba(255, 77, 87, .25);
+    }
+
+    .game .pick .teams .team h2 {
+      margin: 0 0 10px;
+      font-family: "Bangers", Impact, sans-serif;
+      font-weight: 400;
+      font-size: 26px;
+      letter-spacing: 2px;
+    }
+
+    .game .pick .teams .team.a h2 {
+      color: #38a8ff;
+    }
+
+    .game .pick .teams .team.b h2 {
+      color: #ff4d57;
+    }
+
+    .game .pick .teams .team .slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .game .pick .teams .team .slots .slot {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 128px;
+      padding: 0;
+      border: 2px dashed #2a3344;
+      border-radius: 10px;
+      background: #0e131c;
+      color: #4a566c;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 34px;
+      overflow: hidden;
+    }
+
+    .game .pick .teams .team .slots .slot.full {
+      border-style: solid;
+      padding-bottom: 6px;
+      color: #e8ecf4;
+    }
+
+    .game .pick .teams .team .slots .slot.full:hover {
+      filter: brightness(1.25);
+    }
+
+    .game .pick .teams .team .slots .slot .pic {
+      position: relative;
+      width: 100%;
+      height: 92px;
+      overflow: hidden;
+    }
+
+    .game .pick .teams .team .slots .slot .name {
+      margin-top: 4px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .game .pick .teams .team .slots .slot .x {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1;
+      text-shadow: 0 0 4px #000;
+    }
+
+    .game .pick .teams .team .syn {
+      min-height: 30px;
+      margin-top: 12px;
+    }
+
+    .game .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .game .badge.on {
+      background: #1f3b22;
+      border: 1px solid #4cd964;
+      color: #8dff9f;
+    }
+
+    .game .badge.off {
+      background: #141a25;
+      border: 1px solid #2a3344;
+      color: #6c7a92;
+    }
+
+    .game .pick .teams .mid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding-top: 24px;
+      text-align: center;
+    }
+
+    .game .pick .teams .mid .vs {
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 70px;
+      line-height: 1;
+      color: #ffd23f;
+      text-shadow: 3px 3px 0 #000;
+    }
+
+    .game .pick .teams .mid .fight {
+      width: 100%;
+      padding: 12px 10px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffd23f, #f08a00);
+      color: #1a1100;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 30px;
+      letter-spacing: 2px;
+      transition: transform .15s, filter .2s;
+    }
+
+    .game .pick .teams .mid .fight:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .game .pick .teams .mid .fight:disabled {
+      filter: grayscale(1) brightness(.45);
+      cursor: not-allowed;
+    }
+
+    .game .pick .teams .mid .hint {
+      margin: 0;
+      color: #7d8aa1;
+      font-size: 16px;
+    }
+
+    .game .pick .filters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 1180px;
+      margin: 22px auto 0;
+    }
+
+    .game .pick .filters .chip {
+      padding: 6px 18px;
+      border: 2px solid #2a3344;
+      border-radius: 999px;
+      background: #0e131c;
+      font-weight: 700;
+      font-size: 18px;
+      transition: background .2s, border-color .2s;
+    }
+
+    .game .pick .filters .chip span {
+      margin-left: 4px;
+      color: #6c7a92;
+      font-weight: 600;
+    }
+
+    .game .pick .filters .chip:hover {
+      border-color: #5a6a86;
+    }
+
+    .game .pick .filters .chip.on {
+      background: #e8ecf4;
+      border-color: #e8ecf4;
+      color: #07090d;
+    }
+
+    .game .pick .filters .chip.on span {
+      color: #4a566c;
+    }
+
+    .game .pick .roster {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 10px;
+      max-width: 1180px;
+      margin: 16px auto 0;
+    }
+
+    .game .pick .roster .hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 8px;
+      border: 2px solid;
+      border-radius: 12px;
+      background: #0e131c;
+      overflow: hidden;
+      text-align: center;
+      transition: transform .15s, filter .2s;
+    }
+
+    .game .pick .roster .hero:hover {
+      transform: translateY(-3px);
+    }
+
+    .game .pick .roster .hero .pic {
+      position: relative;
+      display: block;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+    }
+
+    .game .pick .roster .hero .pic .tag {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      padding: 1px 8px;
+      border-radius: 5px;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .game .pick .roster .hero .name {
+      margin-top: 6px;
+      padding: 0 4px;
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 1.1;
+    }
+
+    .game .pick .roster .hero .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px 6px;
+      margin: 5px 8px 0;
+      color: #8d99ae;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .game .pick .roster .hero .stats b {
+      margin-right: 4px;
+      color: #566176;
+      font-weight: 700;
+    }
+
+    .game .pick .roster .hero.in-a {
+      box-shadow: 0 0 0 3px #38a8ff, 0 0 22px rgba(56, 168, 255, .45);
+    }
+
+    .game .pick .roster .hero.in-a .pic .tag {
+      background: #1a7fd0;
+    }
+
+    .game .pick .roster .hero.in-b {
+      box-shadow: 0 0 0 3px #ff4d57, 0 0 22px rgba(255, 77, 87, .45);
+    }
+
+    .game .pick .roster .hero.in-b .pic .tag {
+      background: #d2323c;
+    }
+
+    .game .pick .roster .hero.taken {
+      filter: grayscale(1) brightness(.4);
+      cursor: not-allowed;
+    }
+
+    .game .pick .roster .hero.taken:hover {
+      transform: none;
+    }
+
+    .game .pic .ini {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 44px;
+      color: rgba(255, 255, 255, .35);
+    }
+
+    .game .pic img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .game .pick .legend {
+      max-width: 1180px;
+      margin: 26px auto 0;
+      padding: 12px 18px;
+      border: 1px solid #232b3a;
+      border-radius: 12px;
+      background: #0b1018;
+      color: #9aa6b8;
+    }
+
+    .game .pick .legend summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #e8ecf4;
+    }
+
+    .game .pick .legend ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .game .pick .legend ul li {
+      margin: 4px 0;
+    }
+
+    .game .pick .legend ul li b {
+      color: #8dff9f;
+    }
+
+    .game .pick .legend p {
+      margin: 8px 0 0;
+      font-size: 16px;
+      color: #6c7a92;
+    }
+
+    .game .battle .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      max-width: 1280px;
+      margin: 0 auto 18px;
+    }
+
+    .game .battle .bar .info {
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+    }
+
+    .game .battle .bar .speed {
+      display: flex;
+      gap: 8px;
+    }
+
+    .game .battle .bar .speed button {
+      white-space: nowrap;
+      min-width: 54px;
+      padding: 6px 12px;
+      border: 2px solid #2a3344;
+      border-radius: 8px;
+      background: #0e131c;
+      font-weight: 700;
+    }
+
+    .game .battle .bar .speed button.on {
+      border-color: #ffd23f;
+      color: #ffd23f;
+    }
+
+    .game .battle .arena {
+      display: flex;
+      align-items: center;
+      max-width: 1280px;
+      min-height: 380px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    .game .battle .arena .side {
+      flex: 1;
+      display: flex;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .game .battle .arena .side.a {
+      flex-direction: row-reverse;
+    }
+
+    .game .battle .arena .center {
+      width: 190px;
+      flex: none;
+      text-align: center;
+    }
+
+    .game .battle .arena .center .vs {
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 72px;
+      line-height: 1;
+      color: #ffd23f;
+      text-shadow: 3px 3px 0 #000;
+    }
+
+    .game .battle .arena .center .log {
+      min-height: 48px;
+      margin: 6px 0 0;
+      font-weight: 700;
+      font-size: 20px;
+      color: #cfd7e6;
+    }
+
+    .game .battle .arena .side .card {
+      position: relative;
+      flex: 0 1 176px;
+      min-width: 0;
+      border-radius: 12px;
+      transform: scale(.92);
+      opacity: .78;
+      transition: transform .3s, opacity .3s, filter .4s;
+    }
+
+    .game .battle .arena .side .card.active {
+      transform: translateY(-10px) scale(1.07);
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .game .battle .arena .side.a .card.active .face {
+      box-shadow: 0 0 30px rgba(56, 168, 255, .6);
+    }
+
+    .game .battle .arena .side.b .card.active .face {
+      box-shadow: 0 0 30px rgba(255, 77, 87, .6);
+    }
+
+    .game .battle .arena .side .card.ko {
+      transform: scale(.88);
+      opacity: .9;
+      filter: grayscale(1) brightness(.5);
+    }
+
+    .game .battle .arena .side .card .face {
+      display: flex;
+      flex-direction: column;
+      border: 2px solid;
+      border-radius: 12px;
+      background: #0e131c;
+      overflow: hidden;
+      transition: box-shadow .3s;
+      position: relative;
+    }
+
+    .game .battle .arena .side .card .face .pic {
+      position: relative;
+      display: block;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+    }
+
+    .game .battle .arena .side .card .face .name {
+      display: block;
+      padding: 6px 4px 0;
+      text-align: center;
+      font-weight: 700;
+      font-size: 19px;
+      line-height: 1.1;
+    }
+
+    .game .battle .arena .side .card .face .hp {
+      position: relative;
+      display: block;
+      height: 10px;
+      margin: 6px 8px 0;
+      border-radius: 5px;
+      background: #1b2231;
+      overflow: hidden;
+    }
+
+    .game .battle .arena .side .card .face .hp .trail {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      border-radius: 5px;
+      background: #fff;
+      opacity: .85;
+      transition: width .6s .35s;
+    }
+
+    .game .battle .arena .side .card .face .hp .fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #2fd35b, #8dff9f);
+      transition: width .25s;
+    }
+
+    .game .battle .arena .side .card .face .hp .fill.low {
+      background: linear-gradient(90deg, #e03131, #ff8a5c);
+    }
+
+    .game .battle .arena .side .card .face .num {
+      display: block;
+      padding: 3px 0 7px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #8d99ae;
+    }
+
+    .game .battle .arena .side .card .stamp {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      padding: 2px 12px;
+      border: 4px solid #ff3b3b;
+      border-radius: 6px;
+      color: #ff3b3b;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 42px;
+      letter-spacing: 2px;
+      line-height: 1.1;
+      background: rgba(0, 0, 0, .55);
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(-18deg);
+      pointer-events: none;
+    }
+
+    .game .battle .arena .side .card.ko .stamp {
+      animation: gameStamp .35s cubic-bezier(.2, 1.6, .4, 1) forwards;
+    }
+
+    .game .battle .arena .side .card .face .pic .float {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      z-index: 3;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 34px;
+      white-space: nowrap;
+      color: #fff;
+      text-shadow: 0 0 6px #000, 2px 2px 0 #000;
+      transform: translateX(-50%);
+      animation: gameFloat .8s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .game .battle .arena .side .card .face .pic .float.crit {
+      color: #ffd23f;
+      font-size: 46px;
+    }
+
+    .game .battle .arena .side .card .face .pic .float.miss {
+      color: #9aa6b8;
+      font-size: 28px;
+    }
+
+    .game .battle .synrow {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1280px;
+      min-height: 34px;
+      margin: 18px auto 0;
+    }
+
+    .game .battle .result {
+      max-width: 760px;
+      margin: 26px auto 0;
+      padding: 22px 26px;
+      border: 2px solid #2a3344;
+      border-radius: 16px;
+      background: #0b1018;
+      text-align: center;
+    }
+
+    .game .battle .result.win {
+      border-color: #4cd964;
+      box-shadow: 0 0 34px rgba(76, 217, 100, .3);
+      animation: gameGlow 1.6s ease-in-out infinite alternate;
+    }
+
+    .game .battle .result.lose {
+      border-color: #ff3b3b;
+    }
+
+    .game .battle .result .banner {
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 58px;
+      letter-spacing: 3px;
+      line-height: 1;
+      text-shadow: 3px 3px 0 #000;
+    }
+
+    .game .battle .result.win .banner {
+      color: #8dff9f;
+    }
+
+    .game .battle .result.lose .banner {
+      color: #ff5a5f;
+    }
+
+    .game .battle .result .banner.a {
+      color: #38a8ff;
+    }
+
+    .game .battle .result .banner.b {
+      color: #ff4d57;
+    }
+
+    .game .battle .result .sub {
+      margin: 8px 0 0;
+      color: #9aa6b8;
+      font-size: 22px;
+    }
+
+    .game .battle .result ul {
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+    }
+
+    .game .battle .result ul li {
+      padding: 6px 0;
+      border-top: 1px solid #1c2433;
+      color: #cfd7e6;
+    }
+
+    .game .battle .result ul li b {
+      color: #fff;
+    }
+
+    .game .battle .result .actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .game .battle .result .actions button {
+      padding: 10px 26px;
+      border: 2px solid #2a3344;
+      border-radius: 10px;
+      background: #0e131c;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+    }
+
+    .game .battle .result .actions button.main {
+      border: 0;
+      background: linear-gradient(180deg, #ffd23f, #f08a00);
+      color: #1a1100;
+    }
+
+
+
+    .game .pick .legend ul li.locked {
+      color: #4a566c;
+    }
+
+    .game .pick .legend ul li.found b {
+      color: #8dff9f;
+    }
+
+    .game .toast {
+      position: fixed;
+      top: 84px;
+      left: 50%;
+      z-index: 60;
+      padding: 10px 28px;
+      border: 2px solid #ffd23f;
+      border-radius: 12px;
+      background: rgba(20, 16, 4, .96);
+      text-align: center;
+      box-shadow: 0 0 36px rgba(255, 210, 63, .45);
+      transform: translateX(-50%);
+      animation: gameToast 3s both;
+      pointer-events: none;
+    }
+
+    .game .toast b {
+      display: block;
+      font-family: "Bangers", Impact, sans-serif;
+      font-weight: 400;
+      font-size: 32px;
+      letter-spacing: 3px;
+      color: #ffd23f;
+    }
+
+    .game .toast span {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .game .battle {
+      position: relative;
+    }
+
+    .game .battle .bar .speed button[data-autoplay].on,
+    .game .battle .bar .speed button[data-auto].on {
+      border-color: #4cd964;
+      color: #8dff9f;
+    }
+
+    .game .battle .intro {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 26%;
+      z-index: 8;
+      text-align: center;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 92px;
+      line-height: 1;
+      letter-spacing: 4px;
+      text-shadow: 4px 4px 0 #000;
+      pointer-events: none;
+      animation: gameIntro 1.2s both;
+    }
+
+    .game .battle .intro small {
+      display: block;
+      margin-top: 6px;
+      font-size: 34px;
+      letter-spacing: 6px;
+    }
+
+    .game .battle .arena .center .round {
+      margin: 4px 0 0;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 2px;
+      color: #6c7a92;
+      text-transform: uppercase;
+    }
+
+    .game .battle .arena .center .log em {
+      display: block;
+      margin-top: 4px;
+      font-style: normal;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+      color: #ffd23f;
+      animation: gameTag .35s cubic-bezier(.2, 1.6, .4, 1);
+    }
+
+    .game .battle .arena.quake {
+      animation: gameQuake .35s;
+    }
+
+    .game .battle .arena .side .card .face .hitfx {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .game .battle .arena .side .card .face .hitfx.on {
+      animation: gameHit .25s ease-out;
+    }
+
+    .game .battle .arena .side .card .face .pic .float.heal {
+      color: #8dff9f;
+      font-size: 36px;
+    }
+
+    .game .battle .arena .side .card.deal {
+      animation: gameDeal .5s backwards;
+    }
+
+    .game .battle .controls {
+      max-width: 860px;
+      margin: 26px auto 0;
+      text-align: center;
+    }
+
+    .game .battle .controls .prompt {
+      margin: 0 0 12px;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      color: #e8ecf4;
+    }
+
+    .game .battle .controls .moves {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .game .battle .controls .moves .move {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 12px;
+      border: 2px solid;
+      border-radius: 14px;
+      background: #0e131c;
+      text-align: center;
+      transition: transform .15s, filter .2s, box-shadow .2s;
+    }
+
+    .game .battle .controls .moves .move b {
+      font-family: "Bangers", Impact, sans-serif;
+      font-weight: 400;
+      font-size: 30px;
+      letter-spacing: 2px;
+    }
+
+    .game .battle .controls .moves .move span {
+      font-size: 17px;
+      color: #9aa6b8;
+    }
+
+    .game .battle .controls .moves .move[data-move="strike"] {
+      border-color: #38a8ff;
+    }
+
+    .game .battle .controls .moves .move[data-move="strike"] b {
+      color: #38a8ff;
+    }
+
+    .game .battle .controls .moves .move[data-move="power"] {
+      border-color: #ff8a1f;
+    }
+
+    .game .battle .controls .moves .move[data-move="power"] b {
+      color: #ff8a1f;
+    }
+
+    .game .battle .controls .moves .move[data-move="guard"] {
+      border-color: #32d3a5;
+    }
+
+    .game .battle .controls .moves .move[data-move="guard"] b {
+      color: #32d3a5;
+    }
+
+    .game .battle .controls .moves .move:hover:not(:disabled) {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(255, 255, 255, .12);
+    }
+
+    .game .battle .controls .moves .move:active:not(:disabled) {
+      transform: scale(.97);
+    }
+
+    .game .battle .controls .moves .move:disabled {
+      filter: grayscale(1) brightness(.5);
+      cursor: default;
+    }
+
+    .game .battle .result {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game .battle .result .confetti {
+      position: absolute;
+      top: -16px;
+      width: 9px;
+      height: 15px;
+      opacity: 0;
+      pointer-events: none;
+      animation: gameConfetti 2.6s ease-in forwards;
+    }
+
+    .game .battle .result .banner {
+      animation: gameBanner .5s cubic-bezier(.2, 1.5, .4, 1);
+    }
+
+    .game .how {
+      max-width: 1180px;
+      margin: 0 auto 18px;
+      padding: 10px 18px;
+      border: 1px solid #232b3a;
+      border-radius: 12px;
+      background: #0b1018;
+      color: #9aa6b8;
+    }
+
+    .game .how summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #e8ecf4;
+    }
+
+    .game .how .body p {
+      margin: 12px 0 0;
+    }
+
+    .game .how .body table {
+      width: 100%;
+      max-width: 640px;
+      margin: 12px auto 0;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    .game .how .body th,
+    .game .how .body td {
+      padding: 6px 10px;
+      border: 1px solid #1c2433;
+      font-size: 17px;
+    }
+
+    .game .how .body th {
+      color: #cfd7e6;
+      background: #0e131c;
+    }
+
+    .game .how .body td.win {
+      background: rgba(76, 217, 100, .16);
+      color: #8dff9f;
+      font-weight: 700;
+    }
+
+    .game .how .body td.lose {
+      background: rgba(255, 77, 87, .14);
+      color: #ff9a9a;
+      font-weight: 700;
+    }
+
+    .game .how .body td.tie {
+      color: #9aa6b8;
+    }
+
+    .game .how .body ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    .game .how .body ul li {
+      margin: 4px 0;
+    }
+
+    .game .tri {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 14px;
+      margin: 12px 0 0;
+    }
+
+    .game .tri span {
+      padding: 4px 14px;
+      border: 1px solid #2a3344;
+      border-radius: 999px;
+      background: #0e131c;
+      font-size: 18px;
+      color: #cfd7e6;
+    }
+
+    .game .tri span b {
+      color: #fff;
+    }
+
+    .game .battle .controls .tri {
+      margin: 0 0 14px;
+    }
+
+    .game .battle .arena .center .log small {
+      display: block;
+      margin-top: 2px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .game .battle .arena .center .log small.good {
+      color: #8dff9f;
+    }
+
+    .game .battle .arena .center .log small.bad {
+      color: #ff8a8a;
+    }
+
+    /* Floating team bar. It is fixed, so showing or hiding it never changes the page height (that was what made the old sticky box flicker). */
+    .game .mini {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 8px 16px;
+      border-bottom: 2px solid #232b3a;
+      background: rgba(7, 9, 13, .95);
+    }
+
+    .game .mini .grp {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .game .mini .grp.b {
+      flex-direction: row-reverse;
+    }
+
+    .game .mini .thumb {
+      position: relative;
+      width: 46px;
+      height: 56px;
+      padding: 0;
+      border: 2px solid;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0e131c;
+    }
+
+    .game .mini .thumb .pic {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .game .mini .thumb .x {
+      position: absolute;
+      top: 1px;
+      right: 4px;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1;
+      text-shadow: 0 0 4px #000;
+    }
+
+    .game .mini .thumb:hover {
+      filter: brightness(1.25);
+    }
+
+    .game .mini .blank {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 56px;
+      border: 2px dashed #2a3344;
+      border-radius: 8px;
+      color: #4a566c;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 22px;
+    }
+
+    .game .mini .note {
+      color: #7d8aa1;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .game .mini .go {
+      padding: 8px 22px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffd23f, #f08a00);
+      color: #1a1100;
+      font-family: "Bangers", Impact, sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+    }
+
+    .game .mini .go:disabled {
+      filter: grayscale(1) brightness(.45);
+      cursor: not-allowed;
+    }
+
+    .game .mini .badge {
+      white-space: nowrap;
+    }
+
+    @keyframes gameToast {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -30px) scale(.8);
+      }
+
+      10% {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1.06);
+      }
+
+      16% {
+        transform: translate(-50%, 0) scale(1);
+      }
+
+      88% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -10px);
+      }
+    }
+
+    @keyframes gameIntro {
+      0% {
+        opacity: 0;
+        transform: scale(2.4);
+      }
+
+      16% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      80% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(.9);
+      }
+    }
+
+    @keyframes gameTag {
+      0% {
+        opacity: 0;
+        transform: scale(2);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes gameQuake {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      20% {
+        transform: translate(-6px, 3px);
+      }
+
+      40% {
+        transform: translate(6px, -3px);
+      }
+
+      60% {
+        transform: translate(-4px, -2px);
+      }
+
+      80% {
+        transform: translate(4px, 2px);
+      }
+    }
+
+    @keyframes gameHit {
+      0% {
+        opacity: .85;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes gameDeal {
+      0% {
+        opacity: 0;
+        translate: 0 -50px;
+      }
+
+      100% {
+        opacity: 1;
+        translate: 0 0;
+      }
+    }
+
+    @keyframes gameSlam {
+      0% {
+        transform: translateY(-16px) rotate(-3deg);
+      }
+
+      60% {
+        transform: translateY(4px) rotate(1deg);
+      }
+
+      100% {
+        transform: translateY(0) rotate(0);
+      }
+    }
+
+    @keyframes gameWin {
+      from {
+        transform: translateY(0);
+        box-shadow: 0 0 18px rgba(255, 210, 63, .5);
+      }
+
+      to {
+        transform: translateY(-8px);
+        box-shadow: 0 0 44px rgba(255, 210, 63, .95);
+      }
+    }
+
+    @keyframes gameConfetti {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(360px) rotate(600deg);
+      }
+    }
+
+    @keyframes gameBanner {
+      0% {
+        opacity: 0;
+        transform: scale(2.2);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes gameLungeA {
+      0% {
+        transform: translateX(0);
+      }
+
+      40% {
+        transform: translateX(48px) scale(1.06);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes gameLungeB {
+      0% {
+        transform: translateX(0);
+      }
+
+      40% {
+        transform: translateX(-48px) scale(1.06);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes gameShake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-9px) rotate(-2deg);
+      }
+
+      40% {
+        transform: translateX(9px) rotate(2deg);
+      }
+
+      60% {
+        transform: translateX(-6px);
+      }
+
+      80% {
+        transform: translateX(6px);
+      }
+    }
+
+    @keyframes gameFloat {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(.6);
+      }
+
+      15% {
+        opacity: 1;
+        transform: translate(-50%, -8px) scale(1.15);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -80px) scale(1);
+      }
+    }
+
+    @keyframes gameStamp {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(-18deg) scale(3);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(-18deg) scale(1);
+      }
+    }
+
+    @keyframes gameGlow {
+      from {
+        box-shadow: 0 0 18px rgba(76, 217, 100, .2);
+      }
+
+      to {
+        box-shadow: 0 0 44px rgba(76, 217, 100, .5);
+      }
+    }
+
+    .game .battle .arena .side .card .face.lunge-a {
+      animation: gameLungeA .28s ease-out;
+    }
+
+    .game .battle .arena .side .card .face.lunge-b {
+      animation: gameLungeB .28s ease-out;
+    }
+
+    .game .battle .arena .side .card .face.shake {
+      animation: gameShake .3s ease-out;
+    }
+
+    .game .battle .arena .side .card .face.guarding {
+      box-shadow: inset 0 0 24px rgba(50, 211, 165, .75), 0 0 20px rgba(50, 211, 165, .7);
+    }
+
+    .game .battle .arena .side .card .face.charging {
+      box-shadow: 0 0 30px rgba(255, 138, 31, .95);
+    }
+
+    .game .battle .arena .side .card.ko .face {
+      animation: gameSlam .4s ease-out;
+    }
+
+    .game .battle .arena .side .card .face.winner {
+      animation: gameWin .9s ease-in-out infinite alternate;
+    }
+
+    @media (max-width: 980px) {
+      .game .pick .teams {
+        grid-template-columns: 1fr;
+      }
+
+      .game .pick .roster {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .game .battle .arena {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
+      }
+
+      .game .battle .arena .side {
+        flex: none;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .game .battle .arena .side.a {
+        flex-direction: row;
+      }
+
+      .game .battle .arena .center {
+        order: -1;
+        width: 100%;
+      }
+
+      .game .top h1 {
+        font-size: 44px;
+      }
+
+      .game .battle .controls .moves {
+        grid-template-columns: 1fr;
+      }
+
+      .game .mini {
+        gap: 8px;
+        padding: 6px 8px;
+      }
+
+      .game .mini .badge,
+      .game .mini .note {
+        display: none;
+      }
+
+      .game .mini .thumb,
+      .game .mini .blank {
+        width: 38px;
+        height: 48px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <section class="game">
+    <header class="top">
+      <h1>Choose Your <span>Sq</span><em>uad</em></h1>
+      <p class="rule"></p>
+    </header>
+
+    <div class="modes">
+      <button class="mode on" data-mode="single">Single Match</button>
+      <button class="mode" data-mode="dual">Dual Mode</button>
+    </div>
+
+    <div class="screen pick">
+      <details class="how">
+        <summary>How to play: which move beats which</summary>
+        <div class="body"></div>
+      </details>
+      <div class="dock">
+        <div class="teams">
+          <div class="team a target" data-team="a">
+            <h2>P1 · Your team</h2>
+            <div class="slots"></div>
+            <div class="syn"></div>
+          </div>
+          <div class="mid">
+            <div class="vs">VS</div>
+            <button class="fight" disabled>Fight</button>
+            <p class="hint"></p>
+          </div>
+          <div class="team b" data-team="b">
+            <h2>P2 · Opponent</h2>
+            <div class="slots"></div>
+            <div class="syn"></div>
+          </div>
+        </div>
+      </div>
+      <div class="filters"></div>
+      <div class="roster"></div>
+      <details class="legend">
+        <summary>Team Dex</summary>
+        <ul></ul>
+        <p>Mix heroes to discover special teams. A team gives a power bonus to every hero on your side. It needs 2 or
+          more members, and only the strongest bonus counts.</p>
+      </details>
+    </div>
+
+    <div class="screen battle" hidden>
+      <div class="bar">
+        <span class="info"></span>
+        <span class="speed">
+          <button data-autoplay>Autoplay</button>
+          <button data-auto class="on" hidden>Auto next</button>
+          <button data-speed="1" class="on">1×</button>
+          <button data-speed="2">2×</button>
+          <button data-speed="4">4×</button>
+          <button data-skip>Skip</button>
+        </span>
+      </div>
+      <div class="intro" hidden></div>
+      <div class="arena">
+        <div class="side a"></div>
+        <div class="center">
+          <div class="vs">VS</div>
+          <p class="round"></p>
+          <p class="log"></p>
+        </div>
+        <div class="side b"></div>
+      </div>
+      <div class="synrow"><span class="sa"></span><span class="sb"></span></div>
+      <div class="controls" hidden>
+        <p class="prompt">Choose your move</p>
+        <div class="tri"></div>
+        <div class="moves">
+          <button class="move" data-move="strike"><b>Strike</b><span>Beats Power Move<br>Loses to Guard</span></button>
+          <button class="move" data-move="power"><b>Power Move</b><span>Beats Guard<br>Loses to Strike · misses
+              often</span></button>
+          <button class="move" data-move="guard"><b>Guard</b><span>Beats Strike<br>Loses to Power Move · heals a
+              little</span></button>
+        </div>
+      </div>
+      <div class="result" hidden></div>
+    </div>
+
+    <div class="mini" hidden>
+      <div class="grp a"></div>
+      <button class="go" disabled>Fight</button>
+      <div class="grp b"></div>
+    </div>
+
+    <div class="toast" hidden></div>
+  </section>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const CFG = { max: 3, dmgScale: 0.4, spread: 0.6, crit: 0.15, critMul: 1.8, armor: 2500, guardHeal: 0.04 };
+
+      // miss = chance the attack misses. Power Move hits hard but misses a lot.
+      const ACTIONS = {
+        strike: { name: "Strike", miss: 0.1 },
+        power: { name: "Power Move", miss: 0.35 },
+        guard: { name: "Guard", miss: 0.1 },
+      };
+      // damage multiplier for the row move when the opponent uses the column move.
+      // Power Move beats Guard, Guard beats Strike, Strike beats Power Move.
+      const MATCHUP = {
+        strike: { strike: 1, power: 1.25, guard: 0.4 },
+        power: { strike: 0.6, power: 1.7, guard: 1.4 },
+        guard: { strike: 0.8, power: 0.35, guard: 0.3 },
+      };
+      const BEATS = { power: "guard", guard: "strike", strike: "power" };
+      const TAGS = { strike: "Interrupt!", power: "Guard Break!", guard: "Counter!" };
+
+      // real teams, a hero can be in several. Only the strongest bonus on a side counts. boost = extra power for 2 / 3 members together
+      const SYNERGY = [
+        { name: "Fantastic Four", members: ["mrfantastic", "humantorch", "thething"], boost: { 2: 0.04, 3: 0.08 } },
+        { name: "Avengers", members: ["captainamerica", "ironman", "thor", "hulk", "hawkeye", "spiderman", "blackpanther", "strange", "wintersoldier"], boost: { 2: 0.03, 3: 0.06 } },
+        { name: "West Coast Avengers", members: ["ironman", "hawkeye", "moonknight"], boost: { 2: 0.03, 3: 0.06 } },
+        { name: "X-Men", members: ["wolverine", "cyclops", "gambit"], boost: { 2: 0.04, 3: 0.08 } },
+        { name: "X-Force", members: ["wolverine", "deadpool"], boost: { 2: 0.04 } },
+        { name: "Guardians of the Galaxy", members: ["rocket", "groot"], boost: { 2: 0.04 } },
+        { name: "Asgardians", members: ["thor", "loki"], boost: { 2: 0.04 } },
+        { name: "Cap & Bucky", members: ["captainamerica", "wintersoldier"], boost: { 2: 0.04 } },
+        { name: "Justice League", members: ["batman", "superman", "flash", "greenlantern", "cyborg"], boost: { 2: 0.03, 3: 0.06 } },
+        { name: "Teen Titans", members: ["nightwing", "cyborg", "robin"], boost: { 2: 0.04, 3: 0.08 } },
+        { name: "Bat Family", members: ["batman", "nightwing", "robin"], boost: { 2: 0.04, 3: 0.08 } },
+        { name: "Earthrealm Defenders", members: ["raiden", "liukang", "kunglao", "johnnycage", "kenshi", "scorpion", "subzero"], boost: { 2: 0.03, 3: 0.06 } },
+        { name: "Shaolin Monks", members: ["liukang", "kunglao"], boost: { 2: 0.04 } },
+      ];
+
+      function matchesOf(team) {
+        const out = [];
+        SYNERGY.forEach((s) => {
+          const n = team.filter((h) => s.members.includes(h.id)).length;
+          if (s.boost[n]) out.push({ name: s.name, boost: s.boost[n], count: n, size: s.members.length });
+        });
+        return out;
+      }
+
+      function synergyOf(team) {
+        let best = null;
+        matchesOf(team).forEach((m) => { if (!best || m.boost > best.boost) best = m; });
+        return best;
+      }
+
+      function powerOf(h) { return h.stats.str * 0.55 + h.stats.abl * 0.45; }
+
+      // how the enemy picks its moves, from its stats: strong hitters use Power Move more, tough ones Guard more (not shown to the player)
+      function leanOf(h) {
+        const cl = (v) => Math.max(10, Math.min(45, v));
+        const power = cl(25 + (h.stats.str - 1040) / 8), guard = cl(25 + (h.stats.def - 1000) / 8);
+        return { strike: 100 - power - guard, power: power, guard: guard };
+      }
+
+      function pickMove(h, rnd) {
+        const l = leanOf(h);
+        const r = rnd() * 100;
+        return r < l.power ? "power" : r < l.power + l.guard ? "guard" : "strike";
+      }
+
+      function fighter(h, boost) {
+        const m = 1 + boost;
+        const max = Math.round(h.stats.hp * m);
+        return { hero: h, max: max, hp: max, power: powerOf(h) * m, def: h.stats.def * m };
+      }
+
+      function hit(x, y, mx, my, rnd) {
+        if (rnd() < ACTIONS[mx].miss) return { dmg: 0, kind: "miss" };
+        const crit = rnd() < CFG.crit;
+        let d = x.power * CFG.dmgScale * (CFG.armor / (CFG.armor + y.def)) * MATCHUP[mx][my];
+        d *= 1 - CFG.spread / 2 + rnd() * CFG.spread;
+        if (crit) d *= CFG.critMul;
+        d = Math.max(1, Math.round(d));
+        y.hp = Math.max(0, y.hp - d);
+        return { dmg: d, kind: crit ? "crit" : "hit" };
+      }
+
+      // boostA / boostB = extra stat boost on top of the team bonus (used by the harder run levels)
+      function newBattle(teamA, teamB, boostA, boostB) {
+        const sa = synergyOf(teamA), sb = synergyOf(teamB);
+        return {
+          sa: sa, sb: sb, ia: 0, ib: 0, duels: [], round: 0, over: false, winner: null,
+          fa: teamA.map((h) => fighter(h, (sa ? sa.boost : 0) + (boostA || 0))),
+          fb: teamB.map((h) => fighter(h, (sb ? sb.boost : 0) + (boostB || 0))),
+        };
+      }
+
+      // plays one round. moveA is the player's move, the enemy picks its own unless moveB is given.
+      function playRound(b, moveA, moveB, rnd) {
+        const a = b.fa[b.ia], e = b.fb[b.ib];
+        const mb = moveB || pickMove(e.hero, rnd);
+        b.round++;
+        const events = [];
+        const order = rnd() < 0.5 ? ["a", "b"] : ["b", "a"];
+        order.forEach((side) => {
+          if (a.hp <= 0 || e.hp <= 0) return;
+          const x = side === "a" ? a : e, y = side === "a" ? e : a;
+          const r = hit(x, y, side === "a" ? moveA : mb, side === "a" ? mb : moveA, rnd);
+          events.push({ from: side, to: side === "a" ? "b" : "a", dmg: r.dmg, kind: r.kind, hpAfter: y.hp });
+        });
+        [["a", a, moveA], ["b", e, mb]].forEach((s) => {
+          if (s[2] !== "guard" || s[1].hp <= 0 || s[1].hp >= s[1].max) return;
+          const heal = Math.min(s[1].max - s[1].hp, Math.round(s[1].max * CFG.guardHeal));
+          s[1].hp += heal;
+          events.push({ from: s[0], to: s[0], dmg: heal, kind: "heal", hpAfter: s[1].hp });
+        });
+        const win = BEATS[moveA] === mb ? moveA : BEATS[mb] === moveA ? mb : null;
+        const tag = moveA === mb ? "Clash!" : TAGS[win];
+        let duel = null;
+        if (a.hp <= 0 || e.hp <= 0) {
+          const w = a.hp > 0 ? "a" : "b", wf = w === "a" ? a : e;
+          duel = { a: b.ia, b: b.ib, winner: w, winnerHp: Math.round((wf.hp / wf.max) * 100) };
+          b.duels.push(duel);
+          if (w === "a") b.ib++; else b.ia++;
+          if (b.ia >= b.fa.length || b.ib >= b.fb.length) { b.over = true; b.winner = w; }
+        }
+        return { moveA: moveA, moveB: mb, tag: tag, events: events, duel: duel };
+      }
+
+      function autoFight(b, rnd) {
+        while (!b.over) playRound(b, "strike", null, rnd);
+        return b;
+      }
+
+      // ----- the 10 match run -----
+      const RUN = { length: 10 };
+      const LEVELS = [
+        { from: 1, name: "Normal", boost: 0, min: 1, max: 2 },
+        { from: 5, name: "Hard", boost: 0.04, min: 2, max: 3 },
+        { from: 7, name: "Harder", boost: 0.08, min: 3, max: 3 },
+        { from: 9, name: "Legendary", boost: 0.14, min: 3, max: 3 },
+      ];
+
+      function levelOf(match) {
+        let lv = LEVELS[0];
+        LEVELS.forEach((l) => { if (match >= l.from) lv = l; });
+        return match === RUN.length ? { name: "Final Boss", boost: 0.14, min: 3, max: 3, boss: true }
+          : match > RUN.length ? { name: "Endless", boost: 0.14 + 0.03 * (match - RUN.length), min: 3, max: 3 }
+            : lv;
+      }
+
+      function enemyFor(match, mine, heroes, rnd) {
+        const lv = levelOf(match);
+        const pool = heroes.filter((h) => !mine.includes(h));
+        const team = lv.boss
+          ? pool.slice().sort((x, y) => powerOf(y) - powerOf(x)).slice(0, 3)
+          : pool.slice().sort(() => rnd() - 0.5).slice(0, lv.min + Math.floor(rnd() * (lv.max - lv.min + 1)));
+        return { team: team, boost: lv.boost, level: lv.name };
+      }
+
+      const P = "./Assets/Images/Model Portraits/";
+      // id, name, group, portrait, color, stats.
+      // STR = offensive power, ABL = skill and powers, DEF = durability, HP = stamina and regeneration (measured against how strong each one is in the comics, films and games)
+      const HEROES = [
+        { id: "spiderman", name: "Spider Man", group: "Marvel", portrait: P + "img_spider-man.png", color: "#0D92F4", stats: { str: 1080, abl: 1130, def: 1000, hp: 1040 } },
+        { id: "venom", name: "Venom", group: "Marvel", portrait: P + "img_venom.png", color: "#5d6b78", stats: { str: 1180, abl: 1080, def: 1120, hp: 1150 } },
+        { id: "joker", name: "Joker", group: "DC", portrait: P + "Injustice2TheJokerLastLaugh.webp", color: "#8738ae", stats: { str: 800, abl: 1000, def: 820, hp: 860 } },
+        { id: "batman", name: "Batman", group: "DC", portrait: P + "Injustice2BatmanArkhamKnight.webp", color: "#243642", stats: { str: 960, abl: 1130, def: 960, hp: 980 } },
+        { id: "thor", name: "Thor", group: "Marvel", portrait: P + "img_thor.png", color: "#789d40", stats: { str: 1200, abl: 1190, def: 1180, hp: 1200 } },
+        { id: "strange", name: "Doctor Strange", group: "Marvel", portrait: P + "img_doctor-strange.png", color: "#7b2d2d", stats: { str: 1100, abl: 1240, def: 1120, hp: 1080 } },
+        { id: "wolverine", name: "Wolverine", group: "Marvel", portrait: P + "img_deadpool-wolverine.png", color: "#b9b22b", stats: { str: 1060, abl: 1140, def: 1100, hp: 1150 } },
+        { id: "deadpool", name: "Deadpool", group: "Marvel", portrait: P + "img_deadpool.png", color: "#a52b2b", stats: { str: 960, abl: 1070, def: 990, hp: 1150 } },
+        { id: "blackpanther", name: "Black Panther", group: "Marvel", portrait: P + "img_black-panther.png", color: "#3b2a5e", stats: { str: 1040, abl: 1150, def: 1060, hp: 1040 } },
+        { id: "hulk", name: "Hulk", group: "Marvel", portrait: P + "img_bruce-banner.png", color: "#2f7a3a", stats: { str: 1250, abl: 1000, def: 1220, hp: 1250 } },
+        { id: "captainamerica", name: "Captain America", group: "Marvel", portrait: P + "img_captain-america.png", color: "#1b3a6b", stats: { str: 1050, abl: 1090, def: 1120, hp: 1070 } },
+        { id: "daredevil", name: "Daredevil", group: "Marvel", portrait: P + "img_daredevil.png", color: "#7a1414", stats: { str: 960, abl: 1050, def: 940, hp: 970 } },
+        { id: "gambit", name: "Gambit", group: "Marvel", portrait: P + "img_gambit.png", color: "#6a2f4f", stats: { str: 960, abl: 1050, def: 860, hp: 900 } },
+        { id: "humantorch", name: "Human Torch", group: "Marvel", portrait: P + "img_human-torch.png", color: "#d9531e", stats: { str: 1010, abl: 1140, def: 900, hp: 960 } },
+        { id: "moonknight", name: "Moon Knight", group: "Marvel", portrait: P + "img_fist-of-vengeance.png", color: "#9aa1b5", stats: { str: 1020, abl: 1080, def: 1010, hp: 1040 } },
+        { id: "mrfantastic", name: "Mr. Fantastic", group: "Marvel", portrait: P + "img_mister-fantastic.png", color: "#1c5fa8", stats: { str: 1000, abl: 1190, def: 1100, hp: 1060 } },
+        { id: "thething", name: "The Thing", group: "Marvel", portrait: P + "img_the-thing.png", color: "#b5651d", stats: { str: 1180, abl: 900, def: 1200, hp: 1180 } },
+        { id: "wintersoldier", name: "Winter Soldier", group: "Marvel", portrait: P + "img_winter-soldier.png", color: "#3b3f47", stats: { str: 1040, abl: 1050, def: 1000, hp: 1030 } },
+        { id: "blade", name: "Blade", group: "Marvel", portrait: P + "img_blade", color: "#2b2b33", stats: { str: 1030, abl: 1050, def: 1000, hp: 1040 } },
+        { id: "cyclops", name: "Cyclops", group: "Marvel", portrait: P + "img_cyclops", color: "#c9461d", stats: { str: 1060, abl: 1130, def: 920, hp: 970 } },
+        { id: "groot", name: "Groot", group: "Marvel", portrait: P + "img_groot", color: "#4f7a2a", stats: { str: 1100, abl: 980, def: 1120, hp: 1150 } },
+        { id: "rocket", name: "Rocket Raccoon", group: "Marvel", portrait: P + "img_guardians-of-the-galaxy-vol-3", color: "#a8552b", stats: { str: 900, abl: 1050, def: 800, hp: 840 } },
+        { id: "hawkeye", name: "Hawkeye", group: "Marvel", portrait: P + "img_hawkeye", color: "#5a3a8c", stats: { str: 930, abl: 1050, def: 840, hp: 880 } },
+        { id: "loki", name: "Loki", group: "Marvel", portrait: P + "img_loki-season-2", color: "#1f6b4a", stats: { str: 1010, abl: 1180, def: 1010, hp: 1030 } },
+        { id: "ironman", name: "Iron Man", group: "Marvel", portrait: P + "img_the-avengers", color: "#b3201f", stats: { str: 1140, abl: 1200, def: 1160, hp: 1080 } },
+        { id: "punisher", name: "The Punisher", group: "Marvel", portrait: P + "img_vengeful-vigilante", color: "#3a3d44", stats: { str: 920, abl: 1000, def: 900, hp: 940 } },
+        { id: "cyborg", name: "Cyborg", group: "DC", portrait: P + "Injustice2Cyborg", color: "#8a2a2a", stats: { str: 1120, abl: 1120, def: 1130, hp: 1100 } },
+        { id: "greenlantern", name: "Green Lantern", group: "DC", portrait: P + "Injustice2GreenLantern", color: "#14a05a", stats: { str: 1150, abl: 1210, def: 1100, hp: 1090 } },
+        { id: "nightwing", name: "Nightwing", group: "DC", portrait: P + "Injustice2Nightwing", color: "#2a3f8f", stats: { str: 930, abl: 1060, def: 920, hp: 950 } },
+        { id: "robin", name: "Robin", group: "DC", portrait: P + "Injustice2RobinBlademaster", color: "#8c2f2f", stats: { str: 880, abl: 1030, def: 860, hp: 900 } },
+        { id: "superman", name: "Superman", group: "DC", portrait: P + "Injustice2Superman", color: "#1d57c4", stats: { str: 1250, abl: 1200, def: 1230, hp: 1250 } },
+        { id: "flash", name: "The Flash", group: "DC", portrait: P + "Injustice2TheFlash", color: "#c4281f", stats: { str: 1150, abl: 1230, def: 1000, hp: 1050 } },
+        { id: "johnnycage", name: "Johnny Cage", group: "Mortal Kombat", portrait: P + "JohnnyCage", color: "#6b6b73", stats: { str: 940, abl: 990, def: 920, hp: 950 } },
+        { id: "kabal", name: "Kabal", group: "Mortal Kombat", portrait: P + "KabalMK11", color: "#5a4a3a", stats: { str: 960, abl: 1010, def: 930, hp: 970 } },
+        { id: "kenshi", name: "Kenshi", group: "Mortal Kombat", portrait: P + "KenshiBalanced", color: "#7a2a2a", stats: { str: 950, abl: 1060, def: 920, hp: 960 } },
+        { id: "kunglao", name: "Kung Lao", group: "Mortal Kombat", portrait: P + "KungLaoShaolinFist", color: "#9a7a2a", stats: { str: 990, abl: 1060, def: 960, hp: 990 } },
+        { id: "liukang", name: "Liu Kang", group: "Mortal Kombat", portrait: P + "LiuKangKlassic", color: "#b8321f", stats: { str: 1050, abl: 1090, def: 1010, hp: 1040 } },
+        { id: "raiden", name: "Raiden", group: "Mortal Kombat", portrait: P + "RaidenThunderGod", color: "#3a7fc4", stats: { str: 1150, abl: 1210, def: 1130, hp: 1160 } },
+        { id: "scorpion", name: "Scorpion", group: "Mortal Kombat", portrait: P + "ScorpionInferno", color: "#c98a14", stats: { str: 1040, abl: 1090, def: 990, hp: 1020 } },
+        { id: "subzero", name: "Sub-Zero", group: "Mortal Kombat", portrait: P + "Sub-ZeroGrandmaster", color: "#2f8fc4", stats: { str: 1020, abl: 1090, def: 1010, hp: 1010 } },
+      ];
+      const BY = {};
+      HEROES.forEach((h) => {
+        h.ini = h.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+        BY[h.id] = h;
+      });
+
+      const GROUPS = ["All", "Marvel", "DC", "Mortal Kombat"];
+      const RULES = {
+        single: "Pick 1 to 3 heroes for each side. You play P1, the computer plays P2. Pick a move every round.",
+        dual: "Build a team of 1 to 3 and fight a run of 10 matches. Pick a move every round. It gets harder as you win. Lose and the run ends.",
+      };
+      const MOVES = { strike: "Strike", power: "Power Move", guard: "Guard" };
+      const LEVEL_COLORS = { Normal: "#e8ecf4", Hard: "#ffb347", Harder: "#ff7a3d", Legendary: "#ff3b3b", "Final Boss": "#ff3b3b", Endless: "#c78bff" };
+      const BEST_KEY = "squadBestRun", DEX_KEY = "squadTeamsFound";
+      const AUTO_GAP = 2000; // ms between a win and the next match when Auto next is on
+
+      function load(key, fallback) {
+        try {
+          const v = localStorage.getItem(key);
+          return v === null ? fallback : JSON.parse(v);
+        } catch (e) { return fallback; }
+      }
+      function save(key, value) {
+        try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { }
+      }
+
+      const state = {
+        mode: "single", target: "a", teams: { a: [], b: [] }, group: "All",
+        best: Number(load(BEST_KEY, 0)) || 0, found: new Set(load(DEX_KEY, [])),
+        battle: null, fight: null, cards: null, token: 0, busy: false, duelRound: 0,
+        speed: 1, skip: false, dockOut: false, autoplay: false, auto: true, timer: null, toast: null, cleared: 0, match: 0,
+      };
+
+      const q = (s) => document.querySelector(s);
+      const qa = (s) => Array.from(document.querySelectorAll(s));
+      const rnd = Math.random;
+      const pct = (b) => "+" + Math.round(b * 100) + "%";
+      const sleep = (ms) => (state.skip ? Promise.resolve() : new Promise((r) => setTimeout(r, ms / state.speed)));
+
+      // a portrait written without an extension is tried as png, webp, jpg (img_ files start with png, the rest with webp)
+      function portraitSrc(h) {
+        if (/\.(png|webp|jpe?g)$/i.test(h.portrait)) return { src: h.portrait, rest: "" };
+        const order = h.portrait.indexOf("img_") >= 0 ? ["png", "webp", "jpg"] : ["webp", "png", "jpg"];
+        return { src: h.portrait + "." + order[0], rest: order.slice(1).join(",") };
+      }
+      function pic(h) {
+        const p = portraitSrc(h);
+        return '<span class="ini">' + h.ini + '</span><img src="' + p.src + '" data-base="' + h.portrait + '" data-try="' + p.rest + '" alt="">';
+      }
+      const bg = (h) => "background:linear-gradient(160deg," + h.color + ",#0b0d12 85%)";
+
+      /* ---------- pick screen ---------- */
+      function renderRoster() {
+        q(".game .pick .roster").innerHTML = HEROES.map((h) =>
+          '<button class="hero" data-id="' + h.id + '" style="border-color:' + h.color + '">' +
+          '<span class="pic" style="' + bg(h) + '">' + pic(h) + '<span class="tag"></span></span>' +
+          '<span class="name">' + h.name + "</span>" +
+          '<span class="stats"><span><b>STR</b>' + h.stats.str + "</span><span><b>ABL</b>" + h.stats.abl + "</span><span><b>DEF</b>" + h.stats.def + "</span><span><b>HP</b>" + h.stats.hp + "</span></span>" +
+          "</button>").join("");
+        q(".game .pick .filters").innerHTML = GROUPS.map((g) =>
+          '<button class="chip" data-group="' + g + '">' + g + " <span>" + (g === "All" ? HEROES.length : HEROES.filter((h) => h.group === g).length) + "</span></button>").join("");
+        applyFilter();
+        renderDex();
+      }
+
+      function applyFilter() {
+        qa(".game .pick .roster .hero").forEach((el) => { el.hidden = state.group !== "All" && BY[el.dataset.id].group !== state.group; });
+        qa(".game .pick .filters .chip").forEach((el) => el.classList.toggle("on", el.dataset.group === state.group));
+      }
+
+      function renderDex() {
+        const n = SYNERGY.filter((s) => state.found.has(s.name)).length;
+        q(".game .pick .legend summary").textContent = "Team Dex · " + n + "/" + SYNERGY.length + " teams discovered";
+        q(".game .pick .legend ul").innerHTML = SYNERGY.map((s) => state.found.has(s.name)
+          ? '<li class="found"><b>' + s.name + "</b>: " + s.members.map((id) => BY[id].name).join(", ") + " · " + Object.keys(s.boost).map((c) => c + " together " + pct(s.boost[c])).join(" · ") + "</li>"
+          : '<li class="locked">??? · Locked team</li>').join("");
+      }
+
+      // the "how to play" text and table are built from the real numbers in the engine, so they can never go out of date
+      function renderHow() {
+        const order = ["strike", "power", "guard"], x = (n) => "×" + n;
+        const tri = ["power", "guard", "strike"].map((m) => "<span><b>" + MOVES[m] + "</b> beats <b>" + MOVES[BEATS[m]] + "</b></span>").join("");
+        let rows = "<tr><th>You pick ↓ · Enemy picks →</th>" + order.map((m) => "<th>" + MOVES[m] + "</th>").join("") + "</tr>";
+        order.forEach((me) => {
+          rows += "<tr><th>" + MOVES[me] + "</th>" + order.map((op) => {
+            const cls = BEATS[me] === op ? "win" : BEATS[op] === me ? "lose" : "tie";
+            return '<td class="' + cls + '">' + x(MATCHUP[me][op]) + " / " + x(MATCHUP[op][me]) + "</td>";
+          }).join("") + "</tr>";
+        });
+        const p = (v) => Math.round(v * 100) + "%";
+        q(".game .how .body").innerHTML =
+          "<p>Every round you pick a move and the enemy picks one too. It works like rock, paper, scissors:</p>" +
+          '<div class="tri">' + tri + "</div>" +
+          "<p>The move that wins the matchup deals much more damage and takes much less. Each box shows the damage you deal / the damage you take (×1 is normal):</p>" +
+          "<table>" + rows + "</table>" +
+          "<ul>" +
+          "<li>Green = you win the matchup. Red = the enemy wins it. Grey = both picked the same move.</li>" +
+          "<li>Power Move misses " + p(ACTIONS.power.miss) + " of the time. Strike and Guard miss " + p(ACTIONS.strike.miss) + ".</li>" +
+          "<li>Guard heals " + p(CFG.guardHeal) + " of the hero's max HP every round.</li>" +
+          "<li>Any hit can be a critical hit: " + p(CFG.crit) + " chance, ×" + CFG.critMul + " damage.</li>" +
+          "<li>The enemy picks its own move every round. Stronger heroes lean toward Power Move and Guard.</li>" +
+          "</ul>";
+        q(".game .battle .controls .tri").innerHTML = tri;
+      }
+
+      function showToast(title, text) {
+        const t = q(".game .toast");
+        clearTimeout(state.toast);
+        t.hidden = true;
+        void t.offsetWidth;
+        t.innerHTML = "<b>" + title + "</b><span>" + text + "</span>";
+        t.hidden = false;
+        state.toast = setTimeout(() => { t.hidden = true; }, 3000);
+      }
+
+      // forming a team on the pick screen discovers it
+      function discover() {
+        const fresh = [];
+        ["a", "b"].forEach((t) => {
+          if (state.mode === "dual" && t === "b") return;
+          matchesOf(state.teams[t]).forEach((m) => {
+            if (!state.found.has(m.name)) { state.found.add(m.name); fresh.push(m); }
+          });
+        });
+        if (!fresh.length) return;
+        save(DEX_KEY, Array.from(state.found));
+        renderDex();
+        showToast("TEAM UNLOCKED", fresh.map((m) => m.name + " " + pct(m.boost)).join(" · "));
+      }
+
+      function synBadge(s) {
+        return s
+          ? '<span class="badge on">★ ' + s.name + " " + s.count + "/" + s.size + " · " + pct(s.boost) + " power</span>"
+          : '<span class="badge off">No team bonus</span>';
+      }
+
+      function slotsHTML(t) {
+        const hidden = state.mode === "dual" && t === "b";
+        let out = "";
+        for (let i = 0; i < CFG.max; i++) {
+          const h = state.teams[t][i];
+          out += h
+            ? '<button class="slot full" data-team="' + t + '" data-id="' + h.id + '" style="border-color:' + h.color + '" title="Remove ' + h.name + '"><span class="pic" style="' + bg(h) + '">' + pic(h) + '</span><span class="name">' + h.name + '</span><span class="x">×</span></button>'
+            : '<div class="slot empty">' + (hidden ? "?" : "+") + "</div>";
+        }
+        return out;
+      }
+
+      function renderPick() {
+        const dual = state.mode === "dual";
+        const a = state.teams.a, b = state.teams.b;
+        ["a", "b"].forEach((t) => {
+          q(".game .pick .teams .team." + t + " .slots").innerHTML = slotsHTML(t);
+          q(".game .pick .teams .team." + t).classList.toggle("target", (!dual && state.target === t) || (dual && t === "a"));
+        });
+        q(".game .pick .teams .team.a .syn").innerHTML = synBadge(synergyOf(a));
+        q(".game .pick .teams .team.b .syn").innerHTML = dual ? '<span class="badge off">Random enemies, harder every few wins</span>' : synBadge(synergyOf(b));
+        q(".game .pick .teams .team.b h2").textContent = dual ? "P2 · Random enemies" : "P2 · Opponent";
+        qa(".game .pick .roster .hero").forEach((el) => {
+          const h = BY[el.dataset.id];
+          const inA = a.includes(h), inB = b.includes(h);
+          const other = state.target === "a" ? inB : inA;
+          el.classList.toggle("in-a", inA);
+          el.classList.toggle("in-b", inB);
+          el.classList.toggle("taken", !dual && other);
+          el.querySelector(".tag").textContent = inA ? "P1" : inB ? "P2" : "";
+        });
+        const ready = dual ? a.length > 0 : a.length > 0 && b.length > 0;
+        const btn = q(".game .pick .teams .mid .fight");
+        btn.disabled = !ready;
+        btn.textContent = dual ? "Start Run" : "Fight";
+        renderMini(ready);
+        q(".game .pick .teams .mid .hint").textContent = ready ? "Ready!" : dual ? "Pick at least 1 hero" : "Pick at least 1 hero for each side";
+        discover();
+      }
+
+      // the floating team bar (shown only while the full team box is scrolled out of view)
+      function miniGroup(t) {
+        let out = "";
+        for (let i = 0; i < CFG.max; i++) {
+          const h = state.teams[t][i];
+          out += h
+            ? '<button class="thumb" data-team="' + t + '" data-id="' + h.id + '" style="border-color:' + h.color + '" title="Remove ' + h.name + '"><span class="pic" style="' + bg(h) + '">' + pic(h) + '</span><span class="x">×</span></button>'
+            : '<span class="blank">+</span>';
+        }
+        const syn = synergyOf(state.teams[t]);
+        return out + (syn ? ' <span class="badge on">★ ' + syn.name + " " + pct(syn.boost) + "</span>" : "");
+      }
+
+      function renderMini(ready) {
+        const dual = state.mode === "dual";
+        q(".game .mini .grp.a").innerHTML = miniGroup("a");
+        q(".game .mini .grp.b").innerHTML = dual ? '<span class="note">Random enemies</span>' : miniGroup("b");
+        const go = q(".game .mini .go");
+        go.disabled = !ready;
+        go.textContent = dual ? "Start Run" : "Fight";
+      }
+
+      function updateMini() {
+        q(".game .mini").hidden = q(".game .pick").hidden || !state.dockOut;
+      }
+
+      function pickHero(id) {
+        const h = BY[id], t = state.mode === "dual" ? "a" : state.target, o = t === "a" ? "b" : "a";
+        const team = state.teams[t];
+        if (team.includes(h)) team.splice(team.indexOf(h), 1);
+        else if (state.teams[o].includes(h)) return;
+        else if (team.length < CFG.max) {
+          team.push(h);
+          if (state.mode === "single" && t === "a" && team.length === CFG.max && !state.teams.b.length) state.target = "b";
+        }
+        renderPick();
+      }
+
+      /* ---------- screens and modes ---------- */
+      function show(name) {
+        qa(".game .screen").forEach((el) => { el.hidden = !el.classList.contains(name); });
+        updateMini();
+      }
+
+      function clearAuto() {
+        clearInterval(state.timer);
+        state.timer = null;
+      }
+
+      function toPick() {
+        clearAuto();
+        state.token++;
+        state.battle = null;
+        state.busy = false;
+        state.cleared = 0;
+        state.match = 0;
+        show("pick");
+        renderPick();
+      }
+
+      function setMode(mode) {
+        state.mode = mode;
+        state.target = "a";
+        state.teams.b = [];
+        qa(".game .modes .mode").forEach((el) => el.classList.toggle("on", el.dataset.mode === mode));
+        q(".game .top .rule").textContent = RULES[mode];
+        toPick();
+      }
+
+      /* ---------- battle ---------- */
+      function cardHTML(f, side, i) {
+        const h = f.hero;
+        return '<div class="card wait deal" style="animation-delay:' + (i * 0.09 + (side === "b" ? 0.05 : 0)) + 's"><div class="face" style="border-color:' + h.color + '">' +
+          '<span class="pic" style="' + bg(h) + '">' + pic(h) + "</span>" +
+          '<span class="name">' + h.name + "</span>" +
+          '<span class="hp"><span class="trail" style="width:100%"></span><span class="fill" style="width:100%"></span></span>' +
+          '<span class="num">' + f.max + " / " + f.max + "</span>" +
+          '<span class="hitfx"></span></div>' +
+          '<span class="stamp">K.O.</span></div>';
+      }
+
+      function infoLine() {
+        q(".game .battle .bar .info").textContent = state.mode === "dual"
+          ? "Run · Match " + state.match + (state.match <= RUN.length ? "/" + RUN.length : "") + " · " + levelOf(state.match).name + " · Cleared " + state.cleared + " · Best " + state.best
+          : "Single Match · You (P1) vs P2";
+      }
+
+      function levelBadge(name, boost) {
+        return boost > 0 ? ' <span class="badge on">' + name + " " + pct(boost) + " stats</span>" : "";
+      }
+
+      function setControls(on) {
+        const c = q(".game .battle .controls");
+        c.hidden = !state.battle || state.battle.over;
+        q(".game .battle .controls .prompt").textContent = on ? "Choose your move" : "…";
+        qa(".game .battle .controls .moves .move").forEach((el) => { el.disabled = !on; });
+      }
+
+      function focusDuel() {
+        const b = state.battle;
+        state.cards.a[b.ia].classList.remove("wait");
+        state.cards.a[b.ia].classList.add("active");
+        state.cards.b[b.ib].classList.remove("wait");
+        state.cards.b[b.ib].classList.add("active");
+        state.duelRound = 0;
+        q(".game .battle .arena .center .round").textContent = "";
+        q(".game .battle .arena .center .log").innerHTML = "<b>" + b.fa[b.ia].hero.name + "</b> vs <b>" + b.fb[b.ib].hero.name + "</b>";
+      }
+
+      function startBattle(ta, tb, boostB) {
+        clearAuto();
+        const token = ++state.token;
+        state.skip = false;
+        state.busy = true;
+        state.fight = { ta: ta, tb: tb, boostB: boostB || 0 };
+        const b = (state.battle = newBattle(ta, tb, 0, boostB || 0));
+        show("battle");
+        q(".game .battle .arena .side.a").innerHTML = b.fa.map((f, i) => cardHTML(f, "a", i)).join("");
+        q(".game .battle .arena .side.b").innerHTML = b.fb.map((f, i) => cardHTML(f, "b", i)).join("");
+        state.cards = { a: qa(".game .battle .arena .side.a .card"), b: qa(".game .battle .arena .side.b .card") };
+        const lv = state.mode === "dual" ? levelOf(state.match) : null;
+        q(".game .battle .synrow .sa").innerHTML = b.sa ? synBadge(b.sa) : "";
+        q(".game .battle .synrow .sb").innerHTML = (b.sb ? synBadge(b.sb) : "") + (lv ? levelBadge(lv.name, lv.boost) : "");
+        q(".game .battle .result").hidden = true;
+        q(".game .toast").hidden = true;
+        q(".game .battle .bar .speed [data-auto]").hidden = state.mode !== "dual";
+        infoLine();
+        setControls(false);
+        q(".game .battle .controls").hidden = true;
+        begin(token, lv);
+      }
+
+      async function begin(token, lv) {
+        focusDuel();
+        const intro = q(".game .battle .intro");
+        intro.innerHTML = lv ? (lv.boss ? "FINAL BOSS" : "MATCH " + state.match) + "<small>" + (lv.boss ? "Legendary" : lv.name) + "</small>" : "FIGHT!";
+        intro.style.color = lv ? LEVEL_COLORS[lv.name] : "#ffd23f";
+        intro.hidden = false;
+        intro.style.animation = "none";
+        void intro.offsetWidth;
+        intro.style.animation = "";
+        await sleep(1250);
+        intro.hidden = true;
+        if (token !== state.token) return;
+        state.busy = false;
+        if (state.autoplay || state.skip) step("strike");
+        else setControls(true);
+      }
+
+      function flash(el, cls) {
+        el.classList.remove("lunge-a", "lunge-b", "shake");
+        void el.offsetWidth;
+        el.style.animationDuration = 0.28 / state.speed + "s";
+        el.classList.add(cls);
+      }
+
+      function setHp(card, f, hp) {
+        const fill = card.querySelector(".hp .fill"), trail = card.querySelector(".hp .trail");
+        const w = (hp / f.max) * 100 + "%";
+        fill.style.width = w;
+        trail.style.width = w;
+        fill.classList.toggle("low", hp / f.max < 0.35);
+        card.querySelector(".num").textContent = hp + " / " + f.max;
+      }
+
+      function stance(card, move, on) {
+        const face = card.querySelector(".face");
+        face.classList.toggle("guarding", on && move === "guard");
+        face.classList.toggle("charging", on && move === "power");
+      }
+
+      function fx(src, dst, ev) {
+        if (state.skip) return;
+        if (ev.kind !== "heal") flash(src.querySelector(".face"), "lunge-" + ev.from);
+        if (ev.kind === "hit" || ev.kind === "crit") {
+          flash(dst.querySelector(".face"), "shake");
+          const h = dst.querySelector(".hitfx");
+          h.classList.remove("on");
+          void h.offsetWidth;
+          h.classList.add("on");
+        }
+        if (ev.kind === "crit") {
+          const arena = q(".game .battle .arena");
+          arena.classList.remove("quake");
+          void arena.offsetWidth;
+          arena.classList.add("quake");
+        }
+        const f = document.createElement("span");
+        f.className = "float " + ev.kind;
+        f.textContent = ev.kind === "miss" ? "MISS" : ev.kind === "heal" ? "+" + ev.dmg : "-" + ev.dmg + (ev.kind === "crit" ? "!" : "");
+        dst.querySelector(".pic").appendChild(f);
+        f.addEventListener("animationend", () => f.remove());
+      }
+
+      async function step(move) {
+        const b = state.battle, token = state.token;
+        if (!b || b.over) return;
+        state.busy = true;
+        setControls(false);
+        const ia = b.ia, ib = b.ib;
+        const ca = state.cards.a[ia], cb = state.cards.b[ib];
+        const r = playRound(b, move, null, rnd);
+        const log = q(".game .battle .arena .center .log");
+        state.duelRound++;
+        q(".game .battle .arena .center .round").textContent = "Round " + state.duelRound;
+        log.innerHTML = "You: <b>" + MOVES[r.moveA] + "</b><br>Enemy: <b>" + MOVES[r.moveB] + "</b>";
+        if (!state.skip) { stance(ca, r.moveA, true); stance(cb, r.moveB, true); }
+        await sleep(550);
+        if (token !== state.token) return;
+        const mw = BEATS[r.moveA] === r.moveB ? "a" : BEATS[r.moveB] === r.moveA ? "b" : "";
+        log.innerHTML += "<em>" + r.tag + "</em>" + (mw ? '<small class="' + (mw === "a" ? "good" : "bad") + '">' + (mw === "a" ? "You win the matchup" : "Enemy wins the matchup") + "</small>" : "");
+        for (const ev of r.events) {
+          fx(ev.from === "a" ? ca : cb, ev.to === "a" ? ca : cb, ev);
+          setHp(ev.to === "a" ? ca : cb, ev.to === "a" ? b.fa[ia] : b.fb[ib], ev.hpAfter);
+          await sleep(ev.kind === "heal" ? 260 : 360);
+          if (token !== state.token) return;
+        }
+        stance(ca, "", false);
+        stance(cb, "", false);
+        if (r.duel) {
+          const loser = r.duel.winner === "a" ? cb : ca;
+          const lf = loser.querySelector(".face");
+          lf.classList.remove("lunge-a", "lunge-b", "shake");
+          lf.style.animationDuration = "";
+          loser.classList.remove("active");
+          loser.classList.add("ko");
+          log.innerHTML = "<b>" + (r.duel.winner === "a" ? b.fa[ia] : b.fb[ib]).hero.name + "</b> wins!";
+          await sleep(950);
+          if (token !== state.token) return;
+          if (!b.over) focusDuel();
+        }
+        state.busy = false;
+        if (b.over) {
+          crown(b);
+          await sleep(900);
+          if (token === state.token) showResult();
+          return;
+        }
+        if (state.skip || state.autoplay) {
+          await sleep(state.skip ? 0 : 300);
+          if (token !== state.token) return;
+          if (state.skip || state.autoplay) return step("strike");
+        }
+        setControls(true);
+      }
+
+      function crown(b) {
+        const card = b.winner === "a" ? state.cards.a[b.ia] : state.cards.b[b.ib];
+        const face = card.querySelector(".face");
+        face.classList.remove("lunge-a", "lunge-b", "shake", "guarding", "charging");
+        face.style.animationDuration = "";
+        face.classList.add("winner");
+        q(".game .battle .arena .center .log").textContent = b.winner === "a" ? "Your team wins!" : "Enemy team wins!";
+      }
+
+      function confetti(box) {
+        const colors = ["#ffd23f", "#38a8ff", "#ff4d57", "#8dff9f", "#c78bff"];
+        for (let i = 0; i < 34; i++) {
+          const c = document.createElement("span");
+          c.className = "confetti";
+          c.style.left = Math.random() * 100 + "%";
+          c.style.background = colors[i % colors.length];
+          c.style.animationDelay = Math.random() * 0.6 + "s";
+          box.appendChild(c);
+          setTimeout(() => c.remove(), 3500);
+        }
+      }
+
+      function showResult() {
+        const b = state.battle, dual = state.mode === "dual", aWon = b.winner === "a";
+        const box = q(".game .battle .result");
+        const champion = dual && aWon && state.match === RUN.length;
+        let banner, sub = "", cls = "", bannerCls = "", actions, note = "";
+        if (dual) {
+          cls = aWon ? "win" : "lose";
+          if (aWon) {
+            state.cleared++;
+            if (state.cleared > state.best) { state.best = state.cleared; save(BEST_KEY, state.best); }
+          }
+          if (champion) {
+            banner = "CHAMPION!";
+            sub = "You cleared all " + RUN.length + " matches! Best: " + state.best;
+            actions = '<button class="main" data-act="next">Keep going (endless)</button><button data-act="quit">Finish run</button>';
+          } else if (aWon) {
+            banner = "VICTORY!";
+            sub = "Match " + state.match + " cleared · Next up: " + levelOf(state.match + 1).name + " · Best: " + state.best;
+            if (state.auto) note = '<p class="sub next"></p>';
+            actions = '<button class="main" data-act="next">Next match</button><button data-act="quit">End run</button>';
+          } else {
+            banner = "DEFEAT";
+            sub = "Run over. You cleared " + state.cleared + (state.cleared <= RUN.length ? " of " + RUN.length : "") + " matches. Best: " + state.best;
+            actions = '<button class="main" data-act="quit">Start again</button>';
+          }
+        } else {
+          bannerCls = b.winner;
+          banner = (aWon ? "P1" : "P2") + " WINS!";
+          sub = aWon ? "Your team is the last one standing." : "The computer team is the last one standing.";
+          actions = '<button class="main" data-act="rematch">Rematch</button><button data-act="quit">Change teams</button>';
+        }
+        const rows = b.duels.map((d) => {
+          const w = d.winner === "a" ? b.fa[d.a] : b.fb[d.b];
+          const l = d.winner === "a" ? b.fb[d.b] : b.fa[d.a];
+          return "<li><b>" + w.hero.name + "</b> beat " + l.hero.name + " with " + d.winnerHp + "% HP left</li>";
+        }).join("");
+        box.className = "result " + cls;
+        box.innerHTML = '<div class="banner ' + bannerCls + '">' + banner + '</div><p class="sub">' + sub + "</p>" + note + "<ul>" + rows + '</ul><div class="actions">' + actions + "</div>";
+        box.hidden = false;
+        q(".game .battle .controls").hidden = true;
+        if (aWon) confetti(box);
+        if (dual && aWon && !champion && state.auto) autoNext();
+        infoLine();
+        box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      /* ---------- run ---------- */
+      function startRun() {
+        state.cleared = 0;
+        state.match = 0;
+        nextMatch();
+      }
+
+      function nextMatch() {
+        state.match++;
+        const e = enemyFor(state.match, state.teams.a, HEROES, rnd);
+        startBattle(state.teams.a, e.team, e.boost);
+      }
+
+      function autoNext() {
+        const note = q(".game .battle .result .next");
+        const end = Date.now() + AUTO_GAP;
+        const tick = () => {
+          const left = end - Date.now();
+          if (left <= 0) nextMatch();
+          else note.textContent = "Next match in " + Math.ceil(left / 1000) + "…";
+        };
+        tick();
+        state.timer = setInterval(tick, 200);
+      }
+
+      /* ---------- events ---------- */
+      q(".game .modes").addEventListener("click", (e) => {
+        const b = e.target.closest(".mode");
+        if (b && b.dataset.mode !== state.mode) setMode(b.dataset.mode);
+      });
+
+      q(".game .pick .filters").addEventListener("click", (e) => {
+        const b = e.target.closest(".chip");
+        if (!b) return;
+        state.group = b.dataset.group;
+        applyFilter();
+      });
+
+      q(".game .pick .roster").addEventListener("click", (e) => {
+        const b = e.target.closest(".hero");
+        if (b) pickHero(b.dataset.id);
+      });
+
+      q(".game .pick .teams").addEventListener("click", (e) => {
+        const slot = e.target.closest(".slot.full");
+        if (slot) {
+          const t = state.teams[slot.dataset.team];
+          t.splice(t.indexOf(BY[slot.dataset.id]), 1);
+          renderPick();
+          return;
+        }
+        const team = e.target.closest(".team");
+        if (team && state.mode === "single") {
+          state.target = team.dataset.team;
+          renderPick();
+        }
+      });
+
+      q(".game .pick .teams .mid .fight").addEventListener("click", () => {
+        if (state.mode === "dual") startRun();
+        else startBattle(state.teams.a, state.teams.b, 0);
+      });
+
+      q(".game .battle .controls .moves").addEventListener("click", (e) => {
+        const b = e.target.closest(".move");
+        if (b && !state.busy && state.battle && !state.battle.over) step(b.dataset.move);
+      });
+
+      q(".game .battle .bar .speed").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.hasAttribute("data-skip")) {
+          state.skip = true;
+          if (!state.busy && state.battle && !state.battle.over) step("strike");
+          return;
+        }
+        if (b.hasAttribute("data-autoplay")) {
+          state.autoplay = !state.autoplay;
+          b.classList.toggle("on", state.autoplay);
+          if (state.autoplay && !state.busy && state.battle && !state.battle.over) step("strike");
+          return;
+        }
+        if (b.hasAttribute("data-auto")) {
+          state.auto = !state.auto;
+          b.classList.toggle("on", state.auto);
+          if (!state.auto) {
+            clearAuto();
+            const note = q(".game .battle .result .next");
+            if (note) note.remove();
+          }
+          return;
+        }
+        state.speed = Number(b.dataset.speed);
+        qa(".game .battle .bar .speed button[data-speed]").forEach((el) => el.classList.toggle("on", el === b));
+      });
+
+      q(".game .battle .result").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.dataset.act === "rematch") startBattle(state.fight.ta, state.fight.tb, state.fight.boostB);
+        else if (b.dataset.act === "next") nextMatch();
+        else toPick();
+      });
+
+      // image events do not bubble, so listen in the capture phase on the section
+      q(".game").addEventListener("load", (e) => {
+        const s = e.target.tagName === "IMG" ? e.target.previousElementSibling : null;
+        if (s && s.classList.contains("ini")) s.remove();
+      }, true);
+      q(".game").addEventListener("error", (e) => {
+        const img = e.target;
+        if (img.tagName !== "IMG") return;
+        const rest = img.dataset.try ? img.dataset.try.split(",") : [];
+        if (rest.length) {
+          img.src = img.dataset.base + "." + rest.shift();
+          img.dataset.try = rest.join(",");
+        } else img.remove();
+      }, true);
+
+      // the floating bar appears when the full team box scrolls out of view. It is fixed, so it never moves the page.
+      new IntersectionObserver((en) => {
+        state.dockOut = !en[0].isIntersecting;
+        updateMini();
+      }).observe(q(".game .pick .dock"));
+
+      q(".game .mini").addEventListener("click", (e) => {
+        const thumb = e.target.closest(".thumb");
+        if (thumb) {
+          const t = state.teams[thumb.dataset.team];
+          t.splice(t.indexOf(BY[thumb.dataset.id]), 1);
+          renderPick();
+        } else if (e.target.closest(".go") && !e.target.closest(".go").disabled) {
+          q(".game .pick .teams .mid .fight").click();
+        }
+      });
+
+      renderHow();
+      renderRoster();
+      setMode("single");
+    })();
+  </script>
+</body>
+
+</html>
